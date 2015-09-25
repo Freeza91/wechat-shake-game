@@ -28,3 +28,8 @@ app.set('port', process.env.PORT || settings.port);
 app.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'))
 });
+
+// log
+var fs = require('fs')
+var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'})
+var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'})
