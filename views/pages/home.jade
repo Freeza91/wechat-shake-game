@@ -2,3 +2,12 @@ extend ../layouts/layout
 
 block content
   p hello pages home
+  #info info-show
+
+  script.
+    var socket = io.connect();
+    socket.emit("connect", { msg: "hello i'am coming !" });
+    socket.on("say", function(data){
+      var count = data.msg;
+      $('#info').html(count);
+    });

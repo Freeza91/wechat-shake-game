@@ -1,4 +1,5 @@
 var express = require('express');
+var http = require('http');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -24,12 +25,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 var routes = require('./config/routes');
 routes(app);
 
-app.set('port', process.env.PORT || settings.port);
-app.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'))
-});
-
 // log
 var fs = require('fs')
-var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'})
-var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'})
+var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'});
+
+// socket.io
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+var socket = require('./socket/index');
+socket(io.sockets);
+
+// start server
+app.set('port', process.env.PORT || settings.port);
+server.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
