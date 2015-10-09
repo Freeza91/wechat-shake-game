@@ -33,8 +33,8 @@ var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'});
 // socket.io
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-var socket = require('./socket/index');
-socket(io.sockets);
+var socket_io = require('./socket/index');
+socket_io(io);
 
 // start server
 app.set('port', process.env.PORT || settings.port);

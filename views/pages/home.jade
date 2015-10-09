@@ -11,3 +11,4 @@ block content
       var count = data.msg;
       $('#info').html(count);
     });
+    socket.emit('get_info', { msg: "hello get info from server "} );
