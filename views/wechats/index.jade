@@ -4,3 +4,10 @@ block content
   script(src='/javascripts/jweixin-1.1.0.js')
   p hello wechats index
   #info info-show
+
+  script.
+    var socket = io.connect();
+    socket.on("say", function(data){
+      var count = data.msg;
+      $('#info').html(count);
+    });
