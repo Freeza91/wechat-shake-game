@@ -7,9 +7,11 @@ var http_auth = require('../middlewares/http_auth');
 
 module.exports = function(app){
   // index
-  app.get('/', http_auth, pages.home);
+  // app.get('/', http_auth, pages.home);
+   app.get('/', pages.home);
 
   // wechats
   app.get('/wechats', wechats.index);
+  app.get('/wechats/api_index', wechats.api_index);
 
 }

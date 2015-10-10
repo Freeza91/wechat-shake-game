@@ -2,8 +2,10 @@ extend ../layouts/layout
 
 block content
   script(src='/javascripts/jweixin-1.1.0.js')
+  script(src='/javascripts/shake.js')
   p hello wechats index
   #info info-show
+  #wechats wechats
 
   script.
     var socket = io.connect();
