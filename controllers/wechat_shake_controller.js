@@ -14,7 +14,23 @@ var config = {
               'menuItem:openWithSafari', 'menuItem:share:appMessage'],
   nonceStr: 'my-wechat-shake-game',
   timestamp: Math.floor((new Date('1991 10 04')) / 1000),
-  url: 'http://691e9693.ngrok.io/wechats'
+  url: 'http://localhost:4000/wechats'
+}
+
+function initDataDB(openid){
+  _promise =
+    redis.zscoreAsync('users', openid)
+      .then(function(data){
+        if(data == null){
+          redis.zadd('users', 0, openid);
+          redis.expire('users', 1000);
+          return 0;
+        } else {
+          return data;
+        }
+      })
+
+  return _promise;
 }
 
 function store_access_token(access_token){
@@ -22,13 +38,13 @@ function store_access_token(access_token){
   redis.expire('access_token', 7100);
 }
 
-function store_ticket(ticket){
-  redis.set('ticket', ticket);
-  redis.expire('ticket', 3600);
+function store_ticket(ticket, signature){
+  redis.set('ticket' + signature, ticket);
+  redis.expire('ticket' + signature, 3600);
 }
 
 function access_token_request(){
-  promise =
+  _promise =
     request.getAsync(access_token_url)
       .then( function(response){
         var body = response[1];
@@ -38,17 +54,17 @@ function access_token_request(){
         return access_token;
       });
 
-  return promise;
+  return _promise;
 }
 
-function js_ticket_request(url){
+function js_ticket_request(url, signature){
   promise =
     request.getAsync(url)
       .then( function(response){
         var body = response[1];
             ticket = JSON.parse(body).ticket;
 
-        store_ticket(ticket);
+        store_ticket(ticket, signature);
         return ticket;
       });
 
@@ -66,21 +82,20 @@ function generate_signature(config) {
   return sha1(string1);
 }
 
-
-// ZINCRBY
-// https://redis.readthedocs.org/en/2.4/sorted_set.html
 var index = function(req, res, next){
 
   var code = req.query.code;
+  var base_url = 'http://' + req.headers.host + req.originalUrl;
+
   if(code == null || code == undefined ){
-    var base_url = 'http://' + req.headers.host + req.originalUrl,
-        url = 'https://open.weixin.qq.com/connect/oauth2/authorize' +
+    var url = 'https://open.weixin.qq.com/connect/oauth2/authorize' +
               '?appid=' + settings.appID +
               '&redirect_uri=' + encodeURIComponent(base_url) +
               '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
 
     res.redirect(url);
   } else {
+    config.url = 'http://' + req.headers.host + req.originalUrl;
     var url = 'https://api.weixin.qq.com/sns/oauth2/access_token' +
               '?appid=' + settings.appID +
               '&secret=' + settings.appsecret +
@@ -92,7 +107,7 @@ var index = function(req, res, next){
         var body = JSON.parse(response[1]);
 
         if( body.errcode == 40029 ){
-          render.json({
+          res.json({
             errmsg: body.errmsg
           })
         }else {
@@ -105,16 +120,21 @@ var index = function(req, res, next){
 
           request.getAsync(url)
             .then( function(response){
-              var body = JSON.parse(response[1]);
+              body = JSON.parse(response[1]);
               if( body.errcode == 40003 ){
                 render.json({
                   errmsg: body.errmsg
-                })
-              }else {
+                });
+              } else {
+                userInfo = body;
 
-                // init and save by openid info key and 0 value as default
-                res.render('wechats/index', body);
+                return initDataDB(openid_info)
               }
+            })
+            .then( function(data){
+              userInfo.score = data;
+
+              res.render('wechats/index', userInfo);
             });
         }
       });
@@ -135,14 +155,15 @@ var api_index = function (req, res, next){
     .then( function(data){
 
       access_token = data;
+      var signature = sha1(access_token);
 
-      return redis.getAsync('ticket')
+      return redis.getAsync('ticket' + signature)
         .then( function(value){
           if(value === null){
             var js_ticket_url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket' +
                           '?type=jsapi&' +
                           'access_token=' + access_token;
-            return js_ticket_request(js_ticket_url);
+            return js_ticket_request(js_ticket_url, signature);
           } else {
             return value;
           }
