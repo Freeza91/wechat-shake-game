@@ -6,6 +6,9 @@ block content
   p hello wechats index
   #info info-show
   #wechats wechats
+  p #{nickname}
+  p= openid
+  img(src="#{headimgurl}" alt="photo")
 
   script.
     var socket = io.connect();

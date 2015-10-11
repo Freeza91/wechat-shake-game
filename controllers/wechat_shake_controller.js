@@ -69,9 +69,55 @@ function generate_signature(config) {
 
 // ZINCRBY
 // https://redis.readthedocs.org/en/2.4/sorted_set.html
-
+var base_url = encodeURIComponent('http://0706963c.ngrok.io/wechats');
 var index = function(req, res, next){
-  res.render('wechats/index');
+
+  var code = req.query.code;
+
+  if(code == null || code == undefined ){
+    var url = 'https://open.weixin.qq.com/connect/oauth2/authorize' +
+              '?appid=' + settings.appID +
+              '&redirect_uri=' + base_url +
+              '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+
+    res.redirect(url);
+  } else {
+    var url = 'https://api.weixin.qq.com/sns/oauth2/access_token' +
+              '?appid=' + settings.appID +
+              '&secret=' + settings.appsecret +
+              '&code=' + code +
+              '&grant_type=authorization_code';
+
+    request.getAsync(url)
+      .then( function(response){
+        var body = JSON.parse(response[1]);
+
+        if( body.errcode == 40029 ){
+          render.json({
+            errmsg: body.errmsg
+          })
+        }else {
+          var access_token = body.access_token;
+          var openid = body.openid;
+          var url = 'https://api.weixin.qq.com/sns/userinfo' +
+                    '?access_token=' + access_token +
+                    '&openid=' + openid +
+                    '&lang=zh_CN';
+
+          request.getAsync(url)
+            .then( function(response){
+              var body = JSON.parse(response[1]);
+              if( body.errcode == 40003 ){
+                render.json({
+                  errmsg: body.errmsg
+                })
+              }else {
+                res.render('wechats/index', body);
+              }
+            });
+        }
+      });
+  }
 }
 
 var api_index = function (req, res, next){
