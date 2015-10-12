@@ -5,13 +5,17 @@ $(function(){
   var x = y = z = last_x = last_y = last_z = 0;
 
   socket.on("shake", function(data){
-    var score = data.score;
-    $('#info').html(score);
+    if(data.code == 1) {
+      var score = data.score;
+      $('#info').html(score);
+    }
   });
 
   socket.on('rank', function(data){
-    var rank = data.rank;
-    $("#rank").html(rank);
+    if(data.code == 1){
+      var rank = data.rank;
+      $("#rank").html(rank);
+    }
   });
 
   function deviceMotionHandler(eventData) {
@@ -37,7 +41,7 @@ $(function(){
   }
 
   $.ajax({
-    url: 'http://75bf22ab.ngrok.io/wechats/api_index',
+    url: 'http://5bd25119.ngrok.io/wechats/api_index',
     type: 'GET',
     dataType: 'json',
     data: ''

@@ -26,11 +26,15 @@ module.exports = function(io){
       var openid = data.openid;
       redis.zscoreAsync('users', openid)
         .then( function(data){
-          score = data + 1;
-          return redis.zincrbyAsync('users', 1, openid);
+          if(data != null ){
+            score = data + 1;
+            return redis.zincrbyAsync('users', 1, openid);
+          } else {
+            socket.emit('shake', { code: -1, msg: '不存在' });
+          }
         })
         .then( function(data){
-          socket.emit("shake", { score: score });
+          socket.emit("shake", { code: 1, score: score });
         })
     });
 
@@ -39,8 +43,13 @@ module.exports = function(io){
       var openid = data.openid;
       redis.zrevrankAsync('users', openid)
         .then( function(data){
-          var rank = data;
-          socket.emit('rank', { rank: rank });
+
+          if(data != null){
+            var rank = data;
+            socket.emit('rank', { code: 1, rank: rank });
+          } else {
+            socket.emit('rank', { code: -1, msg: '不存在' })
+          }
         })
     });
 
