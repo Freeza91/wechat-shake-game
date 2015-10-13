@@ -1,4 +1,5 @@
 var admin = require('./admin'),
+    push_users = require('../lib/push_users'),
     collect_shakes = require('./collect_shakes');
 
 module.exports = function(io){
@@ -7,6 +8,7 @@ module.exports = function(io){
 
     collect_shakes.collect(socket);
     admin.show(socket);
+    push_users.init(socket);
 
   });
 
