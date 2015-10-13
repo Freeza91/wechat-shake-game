@@ -31,6 +31,7 @@ $(function(){
         var speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
         if (speed > SHAKE_THRESHOLD) {
+          // Math.ceil(Math.random()* 7 + 1)
           alert('shake your hands');
           socket.emit('shake', { openid: openid } )
         }
@@ -41,7 +42,7 @@ $(function(){
   }
 
   $.ajax({
-    url: 'http://5bd25119.ngrok.io/wechats/api_index',
+    url: 'http://fee4ac30.ngrok.io/wechats/api_index',
     type: 'GET',
     dataType: 'json',
     data: ''

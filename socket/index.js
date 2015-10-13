@@ -1,4 +1,4 @@
-var redis = require('../lib/redis');
+var admin = require('./admin');
 
 module.exports = function(io){
 
@@ -7,7 +7,6 @@ module.exports = function(io){
     // setInterval(function(){
     //   // https://redis.readthedocs.org/en/2.4/sorted_set.html
     //   // http://stackoverflow.com/questions/24157632/node-redis-get-zrange-withscores
-    //   redis.zrevrange('hello-set', 0, -1, 'withscores', function (err, reply){
     //     result = reply;
     //     for(var i=0; i<reply.length; i++){
     //       if(i % 2 == 1){
@@ -24,11 +23,11 @@ module.exports = function(io){
     socket.on('shake', function(data){
 
       var openid = data.openid;
-      redis.zscoreAsync('users', openid)
+      redis.client.zscoreAsync('users', openid)
         .then( function(data){
           if(data != null ){
             score = data + 1;
-            return redis.zincrbyAsync('users', 1, openid);
+            return redis.client.zincrbyAsync('users', 1, openid);
           } else {
             socket.emit('shake', { code: -1, msg: '不存在' });
           }
@@ -41,7 +40,7 @@ module.exports = function(io){
     socket.on('rank', function(data){
 
       var openid = data.openid;
-      redis.zrevrankAsync('users', openid)
+      redis.client.zrevrankAsync('users', openid)
         .then( function(data){
 
           if(data != null){
@@ -52,6 +51,8 @@ module.exports = function(io){
           }
         })
     });
+
+    admin.show(socket);
 
   });
 
