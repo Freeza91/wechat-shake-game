@@ -10,8 +10,10 @@ $(function(){
     if(data.code == 1) {
       var score = data.score;
       $('#info').html(score);
-    } else {
+    } else if(data.code == -1) {
       alert('不存在这个用户');
+    } else if(data.code == 0){
+      alert('比赛还没开始');
     }
   });
 

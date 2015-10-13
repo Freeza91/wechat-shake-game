@@ -17,4 +17,15 @@ $(function(){
     $('#users').html(JSON.stringify(data));
   })
 
+  $('#start').on('click', function(data){
+    socket.emit('start', { flag: 'start' });
+    // begin time counter reverse for 5s
+  });
+
+  socket.on('end', function(data){
+    if(data.code === 1){
+      // begin black screen and show scores
+    }
+  })
+
 });

@@ -1,13 +1,45 @@
 var redis = require('../lib/redis'),
     client = redis.client;
 
-var show = function(socket){
+var counter = 0;
+var socket;
 
-  setInterval(function(){
-    client.zrevrangeAsync('users', 0, 4, 'withscores').then(function(data){
-      socket.emit('all_rank', { code: 1, users: data });
-    })
-  }, 1000);
+function pushInterval(){
+
+  counter += 1;
+
+  setTimeout(function(){
+    client.getAsync('flag')
+      .then(function(data){
+        if(data){
+          return client.zrevrangeAsync('users', 0, 4, 'withscores');
+        } else {
+          if(counter <= 50){
+            pushInterval();
+          } else {
+            socket.emit('end', { code: 2, msg: '游戏结束' })
+          }
+        }
+      }).then(function(data){
+        socket.emit('all_rank', { code: 1, users: data });
+        if(counter <= 50){
+          pushInterval();
+        } else {
+          socket.emit('end', { code: 2, msg: '游戏结束' })
+        }
+      })
+  }, 1000)
+}
+var show = function(sock){
+  socket = sock;
+  socket.on('start', function(data){
+    if(data.flag === 'start'){
+      setTimeout(function(){
+        pushInterval();
+        redis.store_with_time('flag', true, 31);
+      }, 4);
+    }
+  })
 
 }
 

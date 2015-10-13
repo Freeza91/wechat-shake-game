@@ -11,9 +11,13 @@ var collect = function(socket){
     var openid = data.openid;
     var num = data.num;
     var score;
-
-    client.zscoreAsync('users', openid)
-      .then(function(data){
+    client.getAsync('flag').then(function(data){
+      if(data){
+        return client.zscoreAsync('users', openid)
+      } else {
+        socket.emit('shake', { code: 0, msg: '比赛还没开始'} );
+      }
+    }).then(function(data){
         if(data){
           score = data + num;
           return client.zincrbyAsync('users', num, openid);
