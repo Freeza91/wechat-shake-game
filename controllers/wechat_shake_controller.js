@@ -21,8 +21,9 @@ var index = function(req, res, next){
 
   var code = req.query.code;
   var base_url = util.get_request_url(req);
+  var userInfo;
 
-  if(code == null || code == undefined ){
+  if(!code){
     var url = 'https://open.weixin.qq.com/connect/oauth2/authorize' +
               '?appid=' + settings.appID +
               '&redirect_uri=' + util.url_encode(base_url) +
@@ -37,7 +38,7 @@ var index = function(req, res, next){
               '&code=' + code +
               '&grant_type=authorization_code';
 
-    net.get(url).then( function(data){
+    net.get(url).then(function(data){
         if(data.errcode == 40029){
           res.json({
             errmsg: data.errmsg
@@ -59,9 +60,12 @@ var index = function(req, res, next){
           });
         } else {
           userInfo = data;
-          res.render('wechats/index', userInfo);
+          return redis.init_user_data(data);
         }
-      })
+      }).then(function(data){
+        userInfo.score = data;
+        res.render('wechats/index', userInfo);
+      });
     }
 }
 

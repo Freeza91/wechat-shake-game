@@ -3,18 +3,24 @@ $(function(){
   var SHAKE_THRESHOLD = 800;
   var last_update = 0;
   var x = y = z = last_x = last_y = last_z = 0;
+  var MAX_SHAKE_NUM = Math.floor((Math.random() * 5) + 5);
+  var counter = 0;
 
   socket.on("shake", function(data){
     if(data.code == 1) {
       var score = data.score;
       $('#info').html(score);
+    } else {
+      alert('不存在这个用户');
     }
   });
 
-  socket.on('rank', function(data){
+  socket.on('my_rank', function(data){
     if(data.code == 1){
       var rank = data.rank;
       $("#rank").html(rank);
+    } else {
+      alert('不存在这个用户');
     }
   });
 
@@ -31,9 +37,13 @@ $(function(){
         var speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
         if (speed > SHAKE_THRESHOLD) {
-          // Math.ceil(Math.random()* 7 + 1)
-          alert('shake your hands');
-          socket.emit('shake', { openid: openid } )
+          counter += 1;
+          alert('counter:' + counter + 'MAX_SHAKE_NUM:' + MAX_SHAKE_NUM);
+          if(counter >= MAX_SHAKE_NUM){
+            socket.emit('shake', { openid: openid, num: counter });
+            counter = 0;
+            MAX_SHAKE_NUM = Math.floor((Math.random() * 5) + 5);
+          }
         }
         last_x = x;
         last_y = y;
@@ -42,7 +52,7 @@ $(function(){
   }
 
   $.ajax({
-    url: 'http://fee4ac30.ngrok.io/wechats/api_index',
+    url: 'http://4a509cbc.ngrok.io/wechats/api_index',
     type: 'GET',
     dataType: 'json',
     data: ''
@@ -61,10 +71,10 @@ $(function(){
     openid = $('#openid').html();
 
     wx.ready(function(){
-      $("#wechats").html("hello");
+      $("#wechats").html("hello wx config");
 
       setInterval(function(){
-        socket.emit('rank', { openid: openid})
+        socket.emit('my_rank', { openid: openid });
       }, 3000);
 
       if (window.DeviceMotionEvent) {
