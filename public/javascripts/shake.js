@@ -54,7 +54,7 @@ $(function(){
   }
 
   $.ajax({
-    url: 'http://4a509cbc.ngrok.io/wechats/api_index',
+    url: 'http://test.geeklab.cc:4000/wechats/api_index',
     type: 'GET',
     dataType: 'json',
     data: ''

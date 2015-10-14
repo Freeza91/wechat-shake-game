@@ -2,15 +2,18 @@ var auth = require('basic-auth');
 var settings = require('../config/application');
 
 module.exports = function (req, res, next){
-  var credentials = auth(req);
+  var auth;
 
-  if (!credentials ||
-      credentials.name !== settings.http_username || credentials.pass !== settings.http_password) {
+  if (req.headers.authorization) {
+    auth = new Buffer(req.headers.authorization.substring(6), 'base64').toString().split(':');
+  }
 
-    res.statusCode = 401
-    res.setHeader('WWW-Authenticate', '需要认证方可看到');
-    res.end('Access denied');
+  if (!auth || auth[0] !== settings.http_username ||
+      auth[1] !== settings.http_password) {
+      res.statusCode = 401;
+      res.setHeader('WWW-Authenticate', 'Basic realm="MyRealmName"');
+      res.end('Unauthorized');
   } else {
-    next();
+      next();
   }
 }
