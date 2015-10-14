@@ -1,0 +1,32 @@
+{
+  apps : [
+    {
+      name      : "wechats",
+      script    : "app.js",
+      env: {
+        COMMON_VARIABLE: "true"
+      },
+      env_production : {
+        NODE_ENV: "production"
+      }
+    }
+  ],
+
+  /**
+   * pm2 deploy ecosystem.json5 production setup
+   * 此处必须是绝对路径，才能正常建立链接
+   * ln -sfn ~/wechats/shared/config/* ~/wechats/current/config/
+   * pm2 deploy production
+   */
+  deploy : {
+    production : {
+      user : "deploy",
+      host : "test.geeklab.cc",
+      port: '9527',
+      ref  : "origin/master",
+      repo : "git@github.com:rudyboy/wechat-shake-game.git",
+      path : "~/wechats",
+      "post-deploy" : "pm2 startOrRestart ecosystem.json5 --env production"
+    }
+  }
+}
