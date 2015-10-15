@@ -2,5 +2,9 @@ module.exports = {
   cookieSecret: 'node-demo',
   db: 'node-demo',
   host: 'localhost',
-  port: 4000
+  port: 4000,
+  http_username: 'xxxx',
+  http_password: 'xxxxx',
+  appID: 'xxxxxx',
+  appsecret: 'xxxxx'
 }

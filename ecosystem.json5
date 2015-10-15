@@ -25,7 +25,7 @@
       port: '9527',
       ref  : "origin/master",
       repo : "git@github.com:rudyboy/wechat-shake-game.git",
-      path : "~/wechats",
+      path : "/home/deploy/wechats",
       "post-deploy" : "pm2 startOrRestart ecosystem.json5 --env production"
     }
   }
