@@ -3,3 +3,5 @@
 /log/access.log
 /log/error.log
 /users.htpasswd
+/*.sh
+/config/*.rb
