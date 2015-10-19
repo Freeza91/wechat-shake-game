@@ -2,11 +2,7 @@ var settings = require('../config/application'),
     net = require('../lib/net'),
     util = require('../lib/util'),
     sha1 = require('../lib/sha1'),
-    redis = require('../lib/redis'),
-    access_token_url = 'https://api.weixin.qq.com/cgi-bin/token?' +
-        'grant_type=client_credential&' +
-        'appid=' + settings.appID + '&' +
-        'secret=' + settings.appsecret;
+    redis = require('../lib/redis');
 
 var config = {
   appId: settings.appID,
@@ -63,15 +59,19 @@ var index = function(req, res, next){
           return redis.init_user_data(data);
         }
       }).then(function(data){
-        userInfo.score = data;
+        userInfo.num = data;
         res.render('wechats/index', userInfo);
       });
     }
 }
 
 var api_index = function (req, res, next){
+  var access_token_url = 'https://api.weixin.qq.com/cgi-bin/token?' +
+                         'grant_type=client_credential&' +
+                         'appid=' + settings.appID + '&' +
+                         'secret=' + settings.appsecret;
 
-  redis.get_value('access_token').then(function(data){ // access_token
+  redis.get_value('access_token').then(function(data){
       if(data == null){
         return net.get(access_token_url).then(function(data){
 

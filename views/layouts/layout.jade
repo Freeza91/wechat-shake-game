@@ -4,8 +4,7 @@ html(lang="en")
     title title
     script(src='/javascripts/jquery.min.js')
     script(src='/socket.io/socket.io.js')
+    link(href='/stylesheets/style.css', rel='stylesheet')
+
   body
-    div
-      | this is a layouts file
-    .container
-      block content
+    block content

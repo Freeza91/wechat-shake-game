@@ -3,12 +3,18 @@ extend ../layouts/layout
 block content
   script(src='/javascripts/jweixin-1.1.0.js')
   script(src='/javascripts/shake.js')
+  link(href='/stylesheets/loading.css', rel='stylesheet')
+  link(href='/stylesheets/mobile.css', rel='stylesheet')
 
-  p hello wechats index
-  #info info-show
-  #wechats wechats
-  p #{nickname}
-  p#openid= openid
-  p#score= score
-  p#rank no rank
-  img(src="#{headimgurl}" alt="photo")
+  .spinner
+    .double-bounce1
+    .double-bounce2
+  .openid
+    | #{openid}
+  .user-info
+    .headimage
+      img.circle(src="#{headimgurl}" alt="photo")
+    .nickname
+      | #{nickname}
+    .num
+      | #{num}

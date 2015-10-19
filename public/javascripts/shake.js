@@ -5,11 +5,20 @@ $(function(){
   var x = y = z = last_x = last_y = last_z = 0;
   var MAX_SHAKE_NUM = Math.floor((Math.random() * 5) + 5);
   var counter = 0;
+  var openid;
+
+  function showInfo(){
+    $('.spinner').hide();
+    $('.user-info').show();
+  }
+
+  function errorInfo(){
+
+  }
 
   socket.on("shake", function(data){
     if(data.code == 1) {
-      var score = data.score;
-      $('#info').html(score);
+      $('#info').html(data.num);
     } else if(data.code == -1) {
       alert('不存在这个用户');
     } else if(data.code == 0){
@@ -17,14 +26,13 @@ $(function(){
     }
   });
 
-  socket.on('my_rank', function(data){
-    if(data.code == 1){
-      var rank = data.rank;
-      $("#rank").html(rank);
+  socket.on('show-me', function(data){
+    if(data.code === 1){
+      showInfo();
     } else {
-      alert('不存在这个用户');
+      errorInfo();
     }
-  });
+  })
 
   function deviceMotionHandler(eventData) {
     var acceleration = eventData.accelerationIncludingGravity;
@@ -54,7 +62,7 @@ $(function(){
   }
 
   $.ajax({
-    url: 'http://test.geeklab.cc:4000/wechats/api_index',
+    url: '/wechats/api_index',
     type: 'GET',
     dataType: 'json',
     data: ''
@@ -70,21 +78,19 @@ $(function(){
       jsApiList: config.jsApiList
     });
 
-    openid = $('#openid').html();
+    openid = $('.openid').html();
 
     wx.ready(function(){
-      $("#wechats").html("hello wx config");
-
-      setInterval(function(){
-        socket.emit('my_rank', { openid: openid });
-      }, 3000);
 
       if (window.DeviceMotionEvent) {
         alert('可以使用');
         window.addEventListener('devicemotion', deviceMotionHandler, false);
       } else {
         alert('本设备不支持devicemotion事件');
-    }
+      }
+
+      socket.emit('start_push_me', { openid: openid } );
+
     });
 
     wx.error( function(res){

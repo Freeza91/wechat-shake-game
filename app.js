@@ -25,11 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 var routes = require('./config/routes');
 routes(app);
 
-// log
-var fs = require('fs')
-var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'});
-var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'});
-
 // socket.io
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
@@ -38,6 +33,6 @@ socket_io(io);
 
 // start server
 app.set('port', process.env.PORT || settings.port);
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), '0.0.0.0', function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

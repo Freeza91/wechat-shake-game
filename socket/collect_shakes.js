@@ -3,14 +3,10 @@ var redis = require('../lib/redis'),
 
 var collect = function(socket){
 
-  // https://redis.readthedocs.org/en/2.4/sorted_set.html
-  // socket.broadcast.emit("say", { msg: "hello client " + result[randNum] });
-
   socket.on('shake', function(data){
-
     var openid = data.openid;
     var num = data.num;
-    var score;
+
     client.getAsync('flag').then(function(data){
       if(data){
         return client.zscoreAsync('users', openid)
@@ -19,30 +15,27 @@ var collect = function(socket){
       }
     }).then(function(data){
         if(data){
-          score = data + num;
+          num = data + num;
           return client.zincrbyAsync('users', num, openid);
         } else {
           socket.emit('shake', { code: -1, msg: '不存在这个用户' });
         }
       }).then(function(data){
-        socket.emit("shake", { code: 1, score: score });
+        socket.emit("shake", { code: 1, num: num });
       })
   });
 
-  socket.on('my_rank', function(data){
-
+  socket.on('start_push_me', function(data){
     var openid = data.openid;
 
-    client.zrevrankAsync('users', openid).then(function(data){
-        if(data || data == 0){
-          var rank = data;
-          socket.emit('my_rank', { code: 1, rank: rank });
-        } else {
-          socket.emit('my_rank', { code: -1, msg: '不存在' })
-        }
-      })
-  });
-
+    client.getAsync(openid).then(function(data){
+      if(data){
+        socket.emit('show-me', { code: 1, msg: 'show users' });
+      } else {
+        socket.emit('show-me', { code: -1, msg: '不存在' });
+      }
+    });
+  })
 }
 
 exports.collect = collect;
