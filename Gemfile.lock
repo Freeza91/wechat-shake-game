@@ -1,0 +1,22 @@
+GIT
+  remote: https://github.com/Freeza91/mina.git
+  revision: 859818feadfc1630f9fe6fbc3711c3febcbb83e1
+  specs:
+    mina (0.3.7)
+      open4 (~> 1.3.4)
+      rake
+
+GEM
+  remote: https://ruby.taobao.org/
+  specs:
+    open4 (1.3.4)
+    rake (10.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mina!
+
+BUNDLED WITH
+   1.10.6
