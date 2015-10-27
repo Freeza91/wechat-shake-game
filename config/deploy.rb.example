@@ -59,8 +59,14 @@ task :deploy => :environment do
     invoke :'deploy:link_shared_paths'
 
     to :launch do
-      # can do some gulp cmd
+      queue! "gulp"
       queue! "pm2 startOrRestart ecosystem.json5 --env production"
     end
   end
+end
+
+task :logs => :environment do
+  queue! %{
+    pm2 logs | grep #{app_name}
+  }
 end
