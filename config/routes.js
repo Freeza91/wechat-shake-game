@@ -17,5 +17,6 @@ module.exports = function(app){
 
   // admin
   app.get('/admin', http_auth, admin.index);
+  app.get('/admin/test', admin.test);
 
 }

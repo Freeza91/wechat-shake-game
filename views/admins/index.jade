@@ -6,5 +6,7 @@ block content
   p hello pages home
   #info info-show
   #users users
+  - each user in users
+    #hello #{user['nickname']}
 
   button#start 准备倒计时！
