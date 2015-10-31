@@ -13,7 +13,7 @@ $(function(){
     }
   });
 
-  socket.on('push_users', function(data){
+  socket.on('push_user', function(data){
     $('#users').html(JSON.stringify(data));
   })
 

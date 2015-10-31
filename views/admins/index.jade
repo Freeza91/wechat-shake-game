@@ -7,6 +7,8 @@ block content
   #info info-show
   #users users
   - each user in users
-    #hello #{user['nickname']}
+    .nickname #{user.nickname}
+    .province #{user.province}
+    .headimgurl #{user.headimgurl}
 
   button#start 准备倒计时！
