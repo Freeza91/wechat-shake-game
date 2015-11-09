@@ -1,0 +1,94 @@
+.spinner {
+
+  width: 300px;
+  height: 200px;
+
+  position: relative;
+  margin: 10px auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background-color: #1abc9c;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  -webkit-animation: sk-bounce 3.0s infinite ease-in-out;
+  animation: sk-bounce 3.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+.spinner {
+  margin-top: 10%;
+  padding-top: 5%;
+}
+
+.user-info, .openid{
+  display: none;
+}
+
+.headimage {
+  margin-left: 30%;
+  margin-right: 30%;
+  width: 40%;
+  margin-top: 10%;
+  text-align: center;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.nickname {
+  height: 5%;
+  margin-left: 30%;
+  margin-right: 30%;
+  margin-top: 1%;
+  font-size:
+  -webkit-xxx-large;
+  text-align: center;
+}
+
+.num {
+  height: 5%;
+  margin-left: 30%;
+  margin-right: 30%;
+  margin-top: 1%;
+  font-size:
+  -webkit-xxx-large;
+  text-align: center;
+}
+
+
+body {
+  padding: 8px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #cfeace;
+}
+
+a {
+  color: #00B7FF;
+}
+
