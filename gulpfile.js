@@ -6,7 +6,6 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
-    notify = require('gulp-notify'),
     clean = require('gulp-clean'),
     minifyCss = require('gulp-minify-css'),
     imagemin = require('gulp-imagemin'),
@@ -40,10 +39,8 @@ gulp.task('javascripts', function(){
       .pipe(gulp.dest('public/javascripts'))
       .pipe(rename({ suffix: '.min' }))
       .pipe(uglify())
-      .on('error', notify.onError('Error: <%= error.message %>'))
       .pipe(sourcemaps.write())
-      .pipe(gulp.dest('public/javascripts'))
-      .pipe(notify({ message: 'Scripts task complete successfully' }));
+      .pipe(gulp.dest('public/javascripts'));
 });
 
 // must be first place
@@ -66,10 +63,8 @@ gulp.task('stylesheets', function(){
       .pipe(gulp.dest('public/stylesheets'))
       .pipe(rename({ suffix: '.min' }))
       .pipe(minifyCss())
-      .on('error', notify.onError('Error: <%= error.message %>'))
       .pipe(sourcemaps.write())
-      .pipe(gulp.dest('public/stylesheets'))
-      .pipe(notify({ message: 'Stylesheets task complete successfully' }));
+      .pipe(gulp.dest('public/stylesheets'));
 });
 
 // images
@@ -79,9 +74,7 @@ gulp.task('images', function(){
               progressive: true,
               svgoPlugins: [{ removeViewBox: false }],
               use: [pngquant()]}))
-      .on('error', notify.onError('Error: <%= error.message %>'))
-      .pipe(gulp.dest('public/images'))
-      .pipe(notify({ message: 'Images task complete successfully' }));
+      .pipe(gulp.dest('public/images'));
 
 })
 
